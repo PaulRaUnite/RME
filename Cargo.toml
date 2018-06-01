@@ -1,0 +1,6 @@
+[package]
+name = "rme"
+version = "0.1.0"
+authors = ["paulra"]
+
+[dependencies]

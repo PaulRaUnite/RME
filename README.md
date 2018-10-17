@@ -23,3 +23,10 @@ J(n,m,l)    | if `n` == `m` then jump to `l` line else next line after the instr
 Enumeration of instruction starts from 1.
 
 Let `N` is amount of instructions in the program. A program finishes if current number of instruction is bigger than `N`.
+
+Tools:
+- [x] interpreter
+- [ ] compiler:
+    - [ ] into Rust
+    - [ ] into assembly
+- [ ] REPL

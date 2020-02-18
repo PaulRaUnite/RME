@@ -1,19 +1,21 @@
 mod machine;
-use machine::Instruction::*;
 use machine::Environment;
+use machine::Instruction::*;
 
 fn main() {
-    let instr = vec![
+    let instructions = vec![
         Increase(1),
         Jump {
             first: 1,
             second: 1,
-            goto: 0,
+            goto: 1,
         },
     ];
-    let mut env = Environment::new(&instr);
-    for (line, instructions, regs) in &mut env {
-        println!("line: {}, {:?}", line, instructions);
+    println!("{:?}", instructions);
+
+    let mut env = Environment::new(instructions);
+    for (line, regs) in &mut env {
+        println!("line: {}", line);
         println!("{:?}", regs)
     }
     println!("{:?}", env.regs());

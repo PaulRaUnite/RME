@@ -1,0 +1,13 @@
+
+zero = {"Z" ~ "(" ~ NUMBER ~ ")"}
+succ = {"S" ~ "(" ~ NUMBER ~ ")"}
+tran = {"T" ~ "(" ~ NUMBER ~ ","  ~ NUMBER ~ ")"}
+jump = {"J" ~ "(" ~ NUMBER ~ ","  ~ NUMBER ~ ","  ~ NUMBER ~ ")"}
+
+program = {
+    SOI
+    ~ ((zero | succ | tran | jump) ~ NEWLINE)*
+    ~ EOI
+}
+
+WHITESPACE = _{ " " }

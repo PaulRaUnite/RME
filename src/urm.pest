@@ -1,13 +1,13 @@
 
-zero = {"Z" ~ "(" ~ NUMBER ~ ")"}
-succ = {"S" ~ "(" ~ NUMBER ~ ")"}
-tran = {"T" ~ "(" ~ NUMBER ~ ","  ~ NUMBER ~ ")"}
-jump = {"J" ~ "(" ~ NUMBER ~ ","  ~ NUMBER ~ ","  ~ NUMBER ~ ")"}
+zero = {"Z" ~ "(" ~ NUMBER+ ~ ")"}
+succ = {"S" ~ "(" ~ NUMBER+ ~ ")"}
+tran = {"T" ~ "(" ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ")"}
+jump = {"J" ~ "(" ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ")"}
 
 program = {
     SOI
-    ~ ((zero | succ | tran | jump) ~ NEWLINE)*
+    ~ ((zero | succ | tran | jump) ~ NEWLINE?)+
     ~ EOI
 }
 
-WHITESPACE = _{ " " }
+WHITESPACE = _{ " " | "\t" }

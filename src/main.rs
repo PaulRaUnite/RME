@@ -3,23 +3,24 @@ extern crate pest;
 extern crate pest_derive;
 extern crate clap;
 
-use pest::Parser;
-use clap::{Arg, SubCommand};
+use clap::Arg;
 use std::error::Error;
 use std::fs::File;
 use std::io::Read;
 
 mod urm;
 
-#[derive(Parser)]
-#[grammar = "urm.pest"]
-pub struct URMParser;
-
-fn main() -> Result<(), Box<dyn Error>>{
+fn main() -> Result<(), Box<dyn Error>> {
     let matches = clap::App::new("URM interpreter")
         .version("0.1.0")
         .author("Pavlo Tokariev")
-        .arg(Arg::with_name("FILE").index(1).required(true).takes_value(true)).get_matches();
+        .arg(
+            Arg::with_name("FILE")
+                .index(1)
+                .required(true)
+                .takes_value(true),
+        )
+        .get_matches();
 
     let filename = matches.value_of("FILE").unwrap();
 

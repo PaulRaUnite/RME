@@ -1,8 +1,9 @@
+num = {NUMBER+}
 
-zero = {"Z" ~ "(" ~ NUMBER+ ~ ")"}
-succ = {"S" ~ "(" ~ NUMBER+ ~ ")"}
-tran = {"T" ~ "(" ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ")"}
-jump = {"J" ~ "(" ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ","  ~ NUMBER+ ~ ")"}
+zero = {"Z" ~ "(" ~ num ~ ")"}
+succ = {"S" ~ "(" ~ num ~ ")"}
+tran = {"T" ~ "(" ~ num ~ ","  ~ num ~ ")"}
+jump = {"J" ~ "(" ~ num ~ ","  ~ num ~ ","  ~ num ~ ")"}
 
 program = {
     SOI

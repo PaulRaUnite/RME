@@ -28,11 +28,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut content = String::new();
     file.read_to_string(&mut content)?;
 
-    let pairs = URMParser::parse(Rule::program, &content)?;
-    for pair in pairs {
-        println!("Rule:    {:?}", pair.as_rule());
-        println!("Span:    {:?}", pair.as_span());
-        println!("Text:    {}", pair.as_str());
-    }
+    let program = urm::parse(&content)?;
+    println!("{:?}", program);
     Ok(())
 }

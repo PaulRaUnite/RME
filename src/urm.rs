@@ -55,8 +55,53 @@ impl Application {
         Ok(Application { memory, program })
     }
 
-    pub fn run(&mut self, arguments: &[u64]) -> Result<u64, Box<dyn std::error::Error>> {
-        Ok(0)
+    pub fn run<'a, 'b>(
+        &'a mut self,
+        arguments: impl IntoIterator<Item = &'b u64>,
+    ) -> Result<u64, Box<dyn std::error::Error>> {
+        for (index, value) in arguments.into_iter().enumerate() {
+            self.memory[index + 1] = *value
+        }
+
+        let mut line_index = 1usize;
+        let program_len = self.program.0.len();
+        while 0 < line_index && line_index < program_len + 1 {
+            let new_line = match self.program[line_index - 1] {
+                Instruction::Increase(register) => {
+                    self.memory[register] += 1;
+                    None
+                }
+                Instruction::Zero(register) => {
+                    self.memory[register] = 0;
+                    None
+                }
+                Instruction::Translate { from, to } => {
+                    self.memory[to] = self.memory[from];
+                    None
+                }
+                Instruction::Jump { reg1, reg2, goto } => {
+                    if self.memory[reg1] == self.memory[reg2] {
+                        Some(goto)
+                    } else {
+                        None
+                    }
+                }
+            };
+            if let Some(line) = new_line {
+                line_index = line;
+            } else {
+                line_index += 1
+            }
+        }
+        Ok(self.memory[0])
+    }
+}
+
+impl Index<usize> for Program {
+    type Output = Instruction;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        self.0.index(index)
     }
 }
 

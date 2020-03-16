@@ -39,10 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let content = read_file(filename)?;
 
-    println!(
-        "{:?}",
-        urm::Application::from_str(&content)?.run(&values)?
-    );
+    println!("{:?}", urm::Application::from_str(&content)?.run(&values)?);
     Ok(())
 }
 

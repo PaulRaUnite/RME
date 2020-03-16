@@ -1,9 +1,11 @@
 use std::fmt;
 use std::fmt::{Debug, Formatter};
+
 use std::ops::{Index, IndexMut};
 
 use itertools::{enumerate, Itertools};
 use pest::Parser;
+use std::collections::HashMap;
 
 #[derive(Debug)]
 pub enum Instruction {
@@ -26,17 +28,46 @@ pub struct Memory(Vec<u64>);
 pub struct Program(Vec<Instruction>);
 
 impl Memory {
-    pub fn from_program(program: &Program) -> Self {
-        Self::new(program.iter_registers())
+    pub fn from_size(size: usize) -> Self {
+        Memory(vec![0; size])
+    }
+}
+
+impl Program {
+    fn compress(mut self) -> (Self, usize) {
+        let len = self.memory_len();
+        let used_registers = self.iter_registers().count();
+        let ratio: f64 = (used_registers as f64) / (len as f64);
+        if ratio > 0.70 {
+            return (self, len);
+        }
+        let mut mapping = HashMap::new();
+        let mut counter = 1usize..;
+        let mut remap_register = |reg: usize| -> usize {
+            if reg == 0 {
+                return 0;
+            }
+            *mapping
+                .entry(reg)
+                .or_insert_with(|| counter.next().unwrap())
+        };
+        self.0.iter_mut().for_each(|i| match i {
+            Instruction::Zero(reg) | Instruction::Increase(reg) => *reg = remap_register(*reg),
+            Instruction::Translate {
+                from: reg1,
+                to: reg2,
+            }
+            | Instruction::Jump { reg1, reg2, .. } => {
+                *reg1 = remap_register(*reg1);
+                *reg2 = remap_register(*reg2);
+            }
+        });
+        let len = self.memory_len();
+        (self, len)
     }
 
-    pub fn new<'a>(active_registers: impl IntoIterator<Item = &'a usize>) -> Self {
-        Memory(
-            active_registers
-                .into_iter()
-                .max()
-                .map_or(vec![0; 1], |max_register| vec![0; max_register + 1]),
-        )
+    pub fn memory_len(&self) -> usize {
+        self.iter_registers().max().map_or(0, |x| *x) + 1
     }
 }
 
@@ -47,10 +78,15 @@ pub struct Application {
 }
 
 impl Application {
+    pub fn new(program: Program) -> Self {
+        let (program, memory_len) = program.compress();
+        Application {
+            memory: Memory::from_size(memory_len),
+            program,
+        }
+    }
     pub fn from_str(content: &str) -> Result<Application, Box<dyn std::error::Error>> {
-        let program = parse(content)?;
-        let memory = Memory::from_program(&program);
-        Ok(Application { memory, program })
+        Ok(Application::new(parse(content)?))
     }
 
     pub fn run<'a, 'b>(

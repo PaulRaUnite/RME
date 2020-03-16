@@ -38,8 +38,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         .collect::<Vec<u64>>();
 
     let content = read_file(filename)?;
-
-    println!("{:?}", urm::Application::from_str(&content)?.run(&values)?);
+    let mut application = urm::Application::from_str(&content)?;
+    println!("{:?}", application.run(&values)?);
     Ok(())
 }
 

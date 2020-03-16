@@ -1,5 +1,9 @@
-use std::collections::HashMap;
-use std::iter::FromIterator;
+use std::fmt;
+use std::fmt::{Debug, Formatter};
+use std::ops::{Index, IndexMut};
+
+use itertools::{enumerate, Itertools};
+use pest::Parser;
 
 #[derive(Debug)]
 pub enum Instruction {
@@ -17,28 +21,22 @@ pub enum Instruction {
 }
 
 #[derive(Debug)]
-pub enum Memory {
-    Linear(Vec<u64>),
-    Sparse(HashMap<usize, u64>),
-}
+pub struct Memory(Vec<u64>);
 
 pub struct Program(Vec<Instruction>);
 
 impl Memory {
-    pub fn new_linear(size: usize) -> Self {
-        Memory::Linear(vec![0; size])
-    }
-
-    pub fn new_sparse<'a>(active_registers: impl Iterator<Item = &'a usize>) -> Self {
-        Memory::Sparse(HashMap::from_iter(active_registers.map(|x| (*x, 0))))
-    }
-
     pub fn from_program(program: &Program) -> Self {
         Self::new(program.iter_registers())
     }
 
-    pub fn new<'a>(active_registers: impl Iterator<Item = &'a usize>) -> Self {
-        Self::new_sparse(active_registers)
+    pub fn new<'a>(active_registers: impl IntoIterator<Item = &'a usize>) -> Self {
+        Memory(
+            active_registers
+                .into_iter()
+                .max()
+                .map_or(vec![0; 1], |max_register| vec![0; max_register + 1]),
+        )
     }
 }
 
@@ -109,27 +107,15 @@ impl Index<usize> for Memory {
     type Output = u64;
 
     fn index(&self, index: usize) -> &Self::Output {
-        match self {
-            Memory::Linear(vector) => vector.index(index),
-            Memory::Sparse(map) => map.index(&index),
-        }
+        self.0.index(index)
     }
 }
 
 impl IndexMut<usize> for Memory {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        match self {
-            Memory::Linear(vector) => vector.index_mut(index),
-            Memory::Sparse(map) => map.get_mut(&index).unwrap(),
-        }
+        self.0.index_mut(index)
     }
 }
-
-use itertools::{enumerate, Itertools};
-use pest::Parser;
-use std::fmt;
-use std::fmt::{Debug, Formatter};
-use std::ops::{Index, IndexMut};
 
 #[derive(Parser)]
 #[grammar = "urm.pest"]

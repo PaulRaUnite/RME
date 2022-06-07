@@ -1,51 +1,30 @@
-extern crate clap;
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
-use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::path::{PathBuf};
+use structopt::StructOpt;
 
-use clap::Arg;
+use std::error::Error;
+use std::fs::{read_to_string};
 
 mod urm;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let matches = clap::App::new("URM interpreter")
-        .version("0.1.0")
-        .author("Pavlo Tokariev")
-        .arg(
-            Arg::with_name("FILE")
-                .index(1)
-                .required(true)
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("values")
-                .index(2)
-                .required(false)
-                .takes_value(true)
-                .multiple(true),
-        )
-        .get_matches();
-
-    let filename = matches.value_of("FILE").unwrap();
-    let values = matches
-        .values_of("values")
-        .unwrap()
-        .map(|x| x.parse().unwrap())
-        .collect::<Vec<u64>>();
-
-    let content = read_file(filename)?;
-    let mut application = urm::Application::from_str(&content)?;
-    println!("{:?}", application.run(&values)?);
-    Ok(())
+/// Register Machine Environment
+#[derive(StructOpt, Debug)]
+#[structopt(name = "rme")]
+struct Opt {
+    /// Path to the Register Machine program
+    program: PathBuf,
+    /// Arguments of the program
+    values: Vec<u64>,
 }
 
-fn read_file(filename: &str) -> Result<String, Box<dyn std::error::Error>> {
-    let mut file = File::open(filename)?;
-    let mut content = String::new();
-    file.read_to_string(&mut content)?;
-    Ok(content)
+fn main() -> Result<(), Box<dyn Error>> {
+    let opt = Opt::from_args();
+
+    let program_code = read_to_string(opt.program)?;
+    let mut interpretation = urm::Application::from_str(&program_code)?;
+    println!("{:?}", interpretation.run(&opt.values)?);
+    Ok(())
 }

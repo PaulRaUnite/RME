@@ -2,11 +2,11 @@ extern crate pest;
 #[macro_use]
 extern crate pest_derive;
 
-use std::path::{PathBuf};
+use std::path::PathBuf;
 use structopt::StructOpt;
 
 use std::error::Error;
-use std::fs::{read_to_string};
+use std::fs::read_to_string;
 
 mod urm;
 

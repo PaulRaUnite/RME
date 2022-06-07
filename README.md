@@ -24,7 +24,9 @@ Types of instructions:
 | I(n)        | increasing by 1 `n`-th register value                                    |
 | T(n,m)      | copying `n`-th register value to `m`-th register                         |
 | J(n,m,l)    | if `n` == `m` then jump to `l` line else next line after the instruction |
-This instruction set is similar to sets from [Counter machine](https://en.wikipedia.org/wiki/Counter_machine) and [Random-access machines](https://en.wikipedia.org/wiki/Random-access_machine).
+
+This instruction set is similar to sets from [Counter machine](https://en.wikipedia.org/wiki/Counter_machine)
+and [Random-access machines](https://en.wikipedia.org/wiki/Random-access_machine).
 
 Enumeration of instruction lines starts from 1.
 
@@ -35,9 +37,9 @@ Tools:
 
 - [x] interpreter
 - [ ] compiler:
-  - [ ] into Rust code
-  - [ ] into WASM
-  - [ ] into machine code
+    - [ ] into Rust code
+    - [ ] into WASM
+    - [ ] into machine code
 - [ ] REPL
 
 ## Example

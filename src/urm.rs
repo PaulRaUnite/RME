@@ -89,11 +89,8 @@ impl Application {
         Ok(Application::new(parse(content)?))
     }
 
-    pub fn run(
-        &mut self,
-        arguments: &[u64],
-    ) -> Result<u64, Box<dyn std::error::Error>> {
-        self.memory.0[1..arguments.len()+1].copy_from_slice(arguments);
+    pub fn run(&mut self, arguments: &[u64]) -> Result<u64, Box<dyn std::error::Error>> {
+        self.memory.0[1..arguments.len() + 1].copy_from_slice(arguments);
 
         let mut line_index = 1usize;
         let program_len = self.program.0.len();
@@ -224,13 +221,13 @@ impl fmt::Debug for Program {
 }
 
 impl Program {
-    pub fn iter_registers(&self) -> impl Iterator<Item=&usize> {
+    pub fn iter_registers(&self) -> impl Iterator<Item = &usize> {
         self.0.iter().flat_map(|i| i.iter_registers())
     }
 }
 
 impl Instruction {
-    pub fn iter_registers(&self) -> impl Iterator<Item=&usize> {
+    pub fn iter_registers(&self) -> impl Iterator<Item = &usize> {
         InstructionRegisters {
             instruction: self,
             index: 0,
